@@ -25,11 +25,11 @@ LABEL \
     io.hass.arch="${BUILD_ARCH}" \
     io.hass.type="addon" \
     io.hass.version=${BUILD_VERSION} \
-    maintainer="Greg Rapp <gdrapp@gmail.com>" \
+    maintainer="JD" \
     org.opencontainers.image.title="Amazon S3 Backup" \
     org.opencontainers.image.description="Automatically upload Home Assistant snapshots to Amazon S3" \
     org.opencontainers.image.vendor="Home Assistant Community Add-ons" \
-    org.opencontainers.image.authors="Greg Rapp <gdrapp@gmail.com>" \
+    org.opencontainers.image.authors="JD" \
     org.opencontainers.image.licenses="MIT" \
     org.opencontainers.image.url="https://github.com/gdrapp/hass-addons     " \
     org.opencontainers.image.source="https://github.com/gdrapp/hass-addons" \
