@@ -65,35 +65,35 @@ class SupervisorAPI:
                         "Error decoding response from Home Assistant Supervisor API")
             return json
 
-    def get_snapshots(self):
-        """Get list of all snapshots
+    def get_backups(self):
+        """Get list of all backups
 
         Returns:
-            List: List of snapshots
+            List: List of backups
         """
-        response = self._get("/snapshots")
-        return response.get("data", {}).get("snapshots", [])
+        response = self._get("/backups")
+        return response.get("data", {}).get("backups", [])
 
-    def get_snapshot(self, slug: str):
-        """Get details of a single snapshot
+    def get_backup(self, slug: str):
+        """Get details of a single backup
 
         Args:
-            slug (str): Slug of snapshot to retrieve
+            slug (str): Slug of backup to retrieve
 
         Returns:
-            dict: Dictionary containing snapshot details
+            dict: Dictionary containing backup details
         """
-        response = self._get(f"/snapshots/{slug}/info")
+        response = self._get(f"/backups/{slug}/info")
         return response.get("data")
 
-    def remove_snapshot(self, slug: str) -> bool:
-        """Delete a snapshot
+    def remove_backup(self, slug: str) -> bool:
+        """Delete a backup
 
         Args:
-            slug (str): Slug of snapshot to delete
+            slug (str): Slug of backup to delete
 
         Returns:
             bool: True if successful
         """
-        response = self._post(f"/snapshots/{slug}/remove")
+        response = self._post(f"/backups/{slug}/remove")
         return True if response.get("result") == "ok" else False
