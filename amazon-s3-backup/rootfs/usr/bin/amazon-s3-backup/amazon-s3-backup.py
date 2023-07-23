@@ -56,25 +56,25 @@ class BackupEventHandler(RegexMatchingEventHandler):
             logger.exception(f"Error uploading file: {err}")
         else:
             if config.keep_local_snapshots is not None:
-                logger.info("Cleaning up local snapshots")
+                logger.info("Cleaning up local backups")
                 try:
-                    snapshots = self.supervisor_api.get_snapshots()
+                    backups = self.supervisor_api.get_backups()
                 except SupervisorAPIError as err:
                     logger.exception(
-                        "Error getting list of snapshots from the Home Assistant Supervisor API")
+                        "Error getting list of backups from the Home Assistant Supervisor API")
                 else:
-                    snapshots.sort(key=lambda s: datetime.datetime.strptime(
+                    backups.sort(key=lambda s: datetime.datetime.strptime(
                         s["date"], "%Y-%m-%dT%H:%M:%S.%f%z"))
-                    snapshots_to_delete = snapshots[:-
+                    backups_to_delete = backups[:-
                                                     config.keep_local_snapshots]
                     logger.info(
-                        f"Deleting the following snapshots: {[s['name'] for s in snapshots_to_delete]}")
-                    for snapshot in snapshots_to_delete:
+                        f"Deleting the following backups: {[s['name'] for s in backups_to_delete]}")
+                    for backup in backups_to_delete:
                         logger.debug(
-                            f"Removing snapshot {snapshot.get('name')}")
-                        if not supervisor_api.remove_snapshot(snapshot.get("slug")):
+                            f"Removing backup {backup.get('name')}")
+                        if not supervisor_api.remove_backup(backup.get("slug")):
                             logger.warn(
-                                f"Error removing snapshot {snapshot.get('name')}")
+                                f"Error removing backup {backup.get('name')}")
 
 
 class FileWatcher:
@@ -108,7 +108,7 @@ class FileWatcher:
 
     def schedule(self):
         logger.info(
-            f"Monitoring path {self.config.monitor_path} for new snapshots")
+            f"Monitoring path {self.config.monitor_path} for new backups")
         self.event_observer.schedule(
             self.event_handler,
             str(self.config.monitor_path),
@@ -142,13 +142,13 @@ def upload_file(file: Path, s3_bucket: S3Bucket, supervisor_api: SupervisorAPI):
     slug = file.stem
     metadata = None
     try:
-        snapshot_detail = supervisor_api.get_snapshot(slug)
+        backup_detail = supervisor_api.get_backup(slug)
         metadata_keys = ["type", "name", "date", "homeassistant"]
-        metadata = {k: snapshot_detail[k]
-                    for k in snapshot_detail if k in metadata_keys}
+        metadata = {k: backup_detail[k]
+                    for k in backup_detail if k in metadata_keys}
     except SupervisorAPIError as err:
         logger.warning(
-            f"Error getting snapshot info from Home Assistant Supervisor API : {err}")
+            f"Error getting backup info from Home Assistant Supervisor API : {err}")
 
     s3_bucket.upload_file(str(file), metadata)
 
