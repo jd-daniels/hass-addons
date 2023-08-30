@@ -57,6 +57,8 @@ class S3Bucket:
         extra_args = {}
         extra_args["StorageClass"] = self.storage_class
         if metadata is not None:
+            if metadata["homeassistant"] is None:
+                metadata["homeassistant"] = "NA"
             extra_args["Metadata"] = metadata
 
         try:
